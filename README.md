@@ -13,7 +13,7 @@ Features:
 ### Try
 To try the microservice features, run the container with the command:
 ```sh
-docker run -it --rm -p 3000:3000 mtsrus/prerender
+docker run -it --rm -p 3000:3000 mtsrus/botview
 ```
 
 Now you can open the browser and check the work with the command:
@@ -27,7 +27,7 @@ The fully rendered page should display, including all content..
 ### Use
 To start the microservice in production, use the command:
 ```sh
-docker run -d --restart always -p 3000:3000 mtsrus/prerender
+docker run -d --restart always -p 3000:3000 mtsrus/botview
 ```
 
 ### Metrics Prometheus
