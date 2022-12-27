@@ -9,7 +9,7 @@ import { APP_INTERCEPTOR } from "@nestjs/core";
         // https://github.com/digikare/nestjs-prom
         PromModule.forRoot({
             defaultLabels: {
-                app: "rupolka_prerender",
+                app: "botview",
                 version: "1.0.0",
             },
             withHttpMiddleware: {

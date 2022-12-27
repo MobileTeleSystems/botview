@@ -3,7 +3,7 @@ FROM node:16-alpine3.11 AS development
 RUN env
 
 WORKDIR /app
-COPY package*.json tsconfig*.json nest-cli.json .npmrc ./
+COPY package*.json tsconfig*.json nest-cli.json ./
 RUN npm install --only=development
 COPY ./src ./src
 RUN npm run build
@@ -22,7 +22,7 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
 RUN apk add --no-cache chromium
 
 WORKDIR /app
-COPY package*.json .npmrc ./
+COPY package*.json ./
 RUN npm install --only=production
 
 COPY --from=development /app/dist ./dist
