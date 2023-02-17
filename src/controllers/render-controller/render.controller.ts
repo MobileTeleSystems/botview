@@ -8,9 +8,13 @@ import {
 } from "@nestjs/common";
 import * as puppeteer from "puppeteer";
 import { Response as EResponse } from "express";
+import { ConsoleMessage } from "puppeteer";
+import { JsonLogger } from "../../services/json-logger.service";
 
 @Controller("render")
 export class RenderController {
+    public constructor(private readonly logger: JsonLogger) {}
+
     /**
      * http://localhost:3000/render/https://tb.mts.ru/
      */
@@ -50,8 +54,33 @@ export class RenderController {
             );
 
             this.setAuth(url, page);
+
             await page.setDefaultNavigationTimeout(30000);
             await page.setDefaultTimeout(15000);
+            page.on("console", (msg: ConsoleMessage) => {
+                let level = 10;
+                const type = msg.type();
+                if (type === "log") {
+                    level = 30;
+                } else if (type === "debug") {
+                    level = 20;
+                } else if (type === "info") {
+                    level = 30;
+                } else if (type === "error") {
+                    level = 50;
+                } else if (type === "warning") {
+                    level = 40;
+                } else if (type === "verbose") {
+                    level = 10;
+                }
+
+                this.logger.extraLogs(`Browser log: ${msg.text()}`, level, {
+                    stack: msg.stackTrace() ?? void 0,
+                    location: msg.location() ?? void 0,
+                    args: msg.args() ?? void 0,
+                });
+            });
+
             await page.goto(url, { waitUntil: "networkidle0" });
             const pageContent = await page.content(); // serialized HTML of page DOM.
 
