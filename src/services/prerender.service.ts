@@ -1,8 +1,11 @@
 import * as puppeteer from "puppeteer";
 import { ConsoleMessage, PuppeteerLifeCycleEvent } from "puppeteer";
-import { JsonLogger } from "./json-logger.service";
+import { JsonLogger, LogLevels } from "./json-logger.service";
 import { config } from "../config";
+import { Injectable } from "@nestjs/common";
+import { LeakedRequests } from "../models/LeakedRequests";
 
+@Injectable()
 export class PrerenderService {
     public constructor(private readonly logger: JsonLogger) {}
 
@@ -18,10 +21,12 @@ export class PrerenderService {
             ],
             timeout: config.navTimeout,
         });
+        let requests: LeakedRequests[] = [];
 
         try {
             const page = await browser.newPage();
             await page.setViewport({ width: 360, height: 640 });
+            await page.setCacheEnabled(false); // resolve bug: https://github.com/puppeteer/puppeteer/issues/7475
             await page.evaluateOnNewDocument(
                 (data) => {
                     Reflect.set(window, "prerender", data);
@@ -34,7 +39,8 @@ export class PrerenderService {
             page.setDefaultNavigationTimeout(config.navTimeout);
             page.setDefaultTimeout(config.defaultTimeout);
             this.setAuth(page, url);
-            this.addLogOnConsole(page);
+            this.setLogOnConsole(page);
+            requests = await this.setRequestLeakDetector(page);
 
             await page.goto(url, {
                 waitUntil: config.waitUntil as PuppeteerLifeCycleEvent,
@@ -53,6 +59,7 @@ export class PrerenderService {
                 pageContent,
             };
         } catch (error) {
+            this.checkAndLogLeakedRequests(requests, error);
             throw error;
         } finally {
             await browser.close();
@@ -82,7 +89,7 @@ export class PrerenderService {
         }
     }
 
-    private addLogOnConsole(page: puppeteer.Page): void {
+    private setLogOnConsole(page: puppeteer.Page): void {
         page.on("console", (msg: ConsoleMessage) => {
             let level = 10;
             const type = msg.type();
@@ -106,5 +113,52 @@ export class PrerenderService {
                 args: msg.args() ?? void 0,
             });
         });
+    }
+
+    private async setRequestLeakDetector(
+        page: puppeteer.Page,
+    ): Promise<LeakedRequests[]> {
+        const requests: LeakedRequests[] = [];
+        await page.setRequestInterception(true);
+
+        page.on("request", (request: puppeteer.HTTPRequest) => {
+            const leakedRequest = new LeakedRequests();
+            leakedRequest.url = request.url();
+            leakedRequest.startTime = Date.now();
+            requests.push(leakedRequest);
+            request.continue();
+        });
+
+        page.on("requestfinished", (request: puppeteer.HTTPRequest) => {
+            const url = request.url();
+            const index = requests.findIndex((lreq) => lreq.url === url);
+            requests.splice(index, 1);
+        });
+
+        page.on("requestfailed", (request: puppeteer.HTTPRequest) => {
+            const url = request.url();
+            const index = requests.findIndex((lreq) => lreq.url === url);
+            requests.splice(index, 1);
+        });
+
+        return requests;
+    }
+
+    private checkAndLogLeakedRequests(
+        requests: LeakedRequests[],
+        error: unknown,
+    ) {
+        if (
+            error instanceof Error &&
+            error.message.startsWith("Navigation timeout")
+        ) {
+            requests.forEach((lreq) => {
+                lreq.endTime = Date.now();
+                lreq.time = lreq.endTime - lreq.startTime;
+            });
+            this.logger.extraLogs(`Leaked requests`, LogLevels.ERROR, {
+                requests: requests,
+            });
+        }
     }
 }
