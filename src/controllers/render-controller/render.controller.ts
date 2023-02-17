@@ -81,7 +81,7 @@ export class RenderController {
                 });
             });
 
-            await page.goto(url, { waitUntil: "networkidle0", timeout: 35000 });
+            await page.goto(url, { waitUntil: "networkidle2", timeout: 35000 });
             const pageContent = await page.content(); // serialized HTML of page DOM.
 
             const statusCode = await page.evaluate(() => {
