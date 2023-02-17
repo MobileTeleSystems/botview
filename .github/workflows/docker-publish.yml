@@ -35,4 +35,4 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          tags: mtsrus/botview:latest, mtsrus/botview:1, mtsrus/botview:1.2, mtsrus/botview:1.2.3
+          tags: mtsrus/botview:latest, mtsrus/botview:1, mtsrus/botview:1.2, mtsrus/botview:1.2.4

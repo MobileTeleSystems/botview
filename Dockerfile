@@ -1,15 +1,14 @@
-FROM node:16-alpine3.11 AS development
-
-RUN env
+FROM node:19-alpine AS development
 
 WORKDIR /app
 COPY package*.json tsconfig*.json nest-cli.json ./
-RUN npm install --only=development
+RUN npm ci
+
 COPY ./src ./src
 RUN npm run build
 
 
-FROM node:16-alpine3.11 as production
+FROM node:19-alpine as production
 
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
@@ -23,7 +22,7 @@ RUN apk add --no-cache chromium
 
 WORKDIR /app
 COPY package*.json ./
-RUN npm install --only=production
+RUN npm ci --omit=dev
 
 COPY --from=development /app/dist ./dist
 
