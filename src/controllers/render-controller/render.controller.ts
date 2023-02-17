@@ -50,6 +50,8 @@ export class RenderController {
             );
 
             this.setAuth(url, page);
+            await page.setDefaultNavigationTimeout(30000);
+            await page.setDefaultTimeout(15000);
             await page.goto(url, { waitUntil: "networkidle0" });
             const pageContent = await page.content(); // serialized HTML of page DOM.
 
