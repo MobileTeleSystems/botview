@@ -3,11 +3,8 @@ import {
     Controller,
     Get,
     Header,
-    UseInterceptors,
-    CacheInterceptor,
     Request,
     Response,
-    CacheTTL,
 } from "@nestjs/common";
 import * as puppeteer from "puppeteer";
 import { Response as EResponse } from "express";
@@ -19,8 +16,6 @@ export class RenderController {
      */
     @Get("*")
     @Header("Content-Type", "text/html")
-    @UseInterceptors(CacheInterceptor)
-    @CacheTTL(24 * 60 * 60) // 1 day
     public async getRender(
         @Request() reguest: Request,
         @Response() response: EResponse,

@@ -1,28 +1,16 @@
-import { CacheModule, Module, CacheInterceptor } from "@nestjs/common";
+import { Module } from "@nestjs/common";
 import { RenderController } from "./controllers/render-controller/render.controller";
-import { PromModule } from "@digikare/nestjs-prom";
-import { APP_INTERCEPTOR } from "@nestjs/core";
+import { NestModule, MiddlewareConsumer } from "@nestjs/common";
+import { RequestLoggerMiddleware } from "./middleware/RequestLoggerMiddleware";
+import { MetricsController } from "./controllers/metrics/metrics.controller";
+import { JsonLogger } from "./services/json-logger.service";
 
 @Module({
-    imports: [
-        CacheModule.register({ max: 100 }),
-        // https://github.com/digikare/nestjs-prom
-        PromModule.forRoot({
-            defaultLabels: {
-                app: "botview",
-                version: "1.0.0",
-            },
-            withHttpMiddleware: {
-                enable: true,
-            },
-        }),
-    ],
-    controllers: [RenderController],
-    providers: [
-        {
-            provide: APP_INTERCEPTOR,
-            useClass: CacheInterceptor,
-        },
-    ],
+    controllers: [RenderController, MetricsController],
+    providers: [JsonLogger],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+    configure(consumer: MiddlewareConsumer): void {
+        consumer.apply(RequestLoggerMiddleware).forRoutes("*");
+    }
+}
