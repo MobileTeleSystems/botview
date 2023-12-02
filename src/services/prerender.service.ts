@@ -11,14 +11,8 @@ export class PrerenderService {
 
     public async render(url: string, headers: Headers) {
         const browser = await puppeteer.launch({
-            headless: true,
-            args: [
-                "--no-sandbox",
-                "--disable-dev-shm-usage",
-                "--disable-gpu",
-                "--single-process",
-                "--no-zygote",
-            ],
+            headless: "new",
+            args: ["--no-sandbox"],
             timeout: config.navTimeout,
         });
         let requests: LeakedRequests[] = [];
