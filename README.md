@@ -30,6 +30,20 @@ To start the microservice in production, use the command:
 docker run -d --restart always -p 3000:3000 mtsrus/botview
 ```
 
+## Container parameters
+
+- `-e BOTVIEW_BASIC_AUTHS="https%3A%2F%2Ftb.mts.ru%2F"` - an array of endpoints with basic authorization parameters, default empty.
+    Has format encodeURIComponent("url"):encodeURIComponent("login"):encodeURIComponent("password"). Use comma as separator.
+
+- `-e BOTVIEW_NAV_TIMEOUT=30000` - [This setting will change the default maximum navigation time](https://pptr.dev/api/puppeteer.page.setdefaultnavigationtimeout),
+    default 30000.
+
+- `-e BOTVIEW_DEFAULT_TIMEOUT=15000` - [This setting will change the default timeout](https://pptr.dev/api/puppeteer.page.setdefaulttimeout),
+    default 15000.
+
+- `-e BOTVIEW_WAIT_UNTIL=networkidle0` - [When to consider waiting succeeds. Given an array of event strings, waiting is considered to be successful after all events have been fired](https://pptr.dev/api/puppeteer.waitforoptions),
+    default networkidle0.
+
 ### Metrics Prometheus
 The microservice has built-in Prometheus monitoring and is located on the endpoint `/metrics`.
 
