@@ -10,8 +10,10 @@ Features:
 - The prerender can work not only for bots but also for all clients if the application supports rerendering
 - Includes exporter of metrics for Prometheus
 
-### Try
+## Try
+
 To try the microservice features, run the container with the command:
+
 ```sh
 docker run -it --rm -p 3000:3000 mtsrus/botview
 ```
@@ -24,11 +26,23 @@ http://localhost:3000/render/https://labeg.ru/
 
 The fully rendered page should display, including all content..
 
-### Use
+## Use
+
 To start the microservice in production, use the command:
+
 ```sh
 docker run -d --restart always -p 3000:3000 mtsrus/botview
 ```
+
+## Return status code
+
+Add the following element to your html and specify the required response status code:
+
+```html
+<meta name="prerender-status" content="301" />
+```
+
+The server will return a response with the specified status code.
 
 ## Container parameters
 
@@ -44,15 +58,18 @@ docker run -d --restart always -p 3000:3000 mtsrus/botview
 - `-e BOTVIEW_WAIT_UNTIL=networkidle0` - [When to consider waiting succeeds. Given an array of event strings, waiting is considered to be successful after all events have been fired](https://pptr.dev/api/puppeteer.waitforoptions),
     default networkidle0.
 
-### Metrics Prometheus
+## Metrics Prometheus
+
 The microservice has built-in Prometheus monitoring and is located on the endpoint `/metrics`.
 
 Block this endpoint on the proxy if you do not need to provide access to metrics from outside your network.
 
-### Proxy server setup
+## Proxy server setup
+
 In order to catch bots and send them to the prerendering microservice, you need to configure a proxy server.
 
 Example config for Nginx:
+
 ```sh
 location / {
 
