@@ -19,7 +19,7 @@ docker run -it --rm -p 3000:3000 mtsrus/botview
 Now you can open the browser and check the work with the command:
 
 ```sh
-http://localhost:3000/render/https://tb.mts.ru/
+http://localhost:3000/render/https://labeg.ru/
 ```
 
 The fully rendered page should display, including all content..
