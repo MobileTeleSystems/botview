@@ -11,7 +11,7 @@ export class PrerenderService {
 
     public async render(url: string, headers: Headers) {
         const browser = await puppeteer.launch({
-            headless: "new",
+            headless: true,
             args: ["--no-sandbox"],
             timeout: config.navTimeout,
         });
@@ -95,7 +95,7 @@ export class PrerenderService {
                 level = 30;
             } else if (type === "error") {
                 level = 50;
-            } else if (type === "warning") {
+            } else if (type === "warn") {
                 level = 40;
             } else if (type === "verbose") {
                 level = 10;
