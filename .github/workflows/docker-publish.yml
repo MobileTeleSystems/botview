@@ -8,8 +8,6 @@ name: Docker
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -35,4 +33,4 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          tags: mtsrus/botview:latest, mtsrus/botview:1, mtsrus/botview:1.5, mtsrus/botview:1.5.3
+          tags: mtsrus/botview:latest, mtsrus/botview:2, mtsrus/botview:2.0, mtsrus/botview:2.0.0

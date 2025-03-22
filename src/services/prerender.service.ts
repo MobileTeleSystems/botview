@@ -1,27 +1,36 @@
-import * as puppeteer from "puppeteer";
-import { ConsoleMessage, PuppeteerLifeCycleEvent } from "puppeteer";
-import { JsonLogger, LogLevels } from "./json-logger.service";
+import { JsonLogger, LogLevels} from "./json-logger.service";
 import { config } from "../config";
 import { Injectable } from "@nestjs/common";
-import { LeakedRequests } from "../models/LeakedRequests";
+import { chromium, webkit, devices, Browser, Page, ConsoleMessage, Request, BrowserContextOptions } from 'playwright';
+import {LeakedRequests} from "../models/LeakedRequests";
 
 @Injectable()
 export class PrerenderService {
     public constructor(private readonly logger: JsonLogger) {}
 
     public async render(url: string, headers: Headers) {
-        const browser = await puppeteer.launch({
-            headless: true,
-            args: ["--no-sandbox"],
+
+        const browser: Browser = await webkit.launch({
+            // headless: false, // for debug
+            // devtools: true,
+            // args: [
+            //     '--no-sandbox', '--disable-setuid-sandbox'
+            // ],
             timeout: config.navTimeout,
         });
+
+        const authHeaders = this.setAuth(url);
+        const context = await browser.newContext({
+            ...devices['Galaxy S8'],
+            ...authHeaders
+        });
+
         let requests: LeakedRequests[] = [];
 
         try {
-            const page = await browser.newPage();
-            await page.setViewport({ width: 360, height: 640 });
-            await page.setCacheEnabled(false); // resolve bug: https://github.com/puppeteer/puppeteer/issues/7475
-            await page.evaluateOnNewDocument(
+            const page: Page = await context.newPage();
+
+            await page.addInitScript(
                 (data) => {
                     Reflect.set(window, "prerender", data);
                 },
@@ -32,12 +41,11 @@ export class PrerenderService {
 
             page.setDefaultNavigationTimeout(config.navTimeout);
             page.setDefaultTimeout(config.defaultTimeout);
-            this.setAuth(page, url);
             this.setLogOnConsole(page);
             requests = await this.setRequestLeakDetector(page);
 
             await page.goto(url, {
-                waitUntil: config.waitUntil as PuppeteerLifeCycleEvent,
+                waitUntil: config.waitUntil as any,
                 timeout: config.navTimeout,
             });
             const pageContent = await page.content(); // serialized HTML of page DOM.
@@ -56,11 +64,12 @@ export class PrerenderService {
             this.checkAndLogLeakedRequests(requests, error);
             throw error;
         } finally {
+            await context.close();
             await browser.close();
         }
     }
 
-    private async setAuth(page: puppeteer.Page, url: string): Promise<void> {
+    private async setAuth(url: string): Promise<Pick<BrowserContextOptions, "httpCredentials">> {
         if (config.basicAuth) {
             // Url, login, password
             const basicAuths: [string, string, string][] = config.basicAuth
@@ -73,17 +82,21 @@ export class PrerenderService {
 
             for (const auth of basicAuths) {
                 if (url.startsWith(auth[0])) {
-                    await page.authenticate({
-                        username: auth[1],
-                        password: auth[2],
-                    });
-                    break;
+                    return {
+                        httpCredentials: {
+                            username: auth[1],
+                            password: auth[2],
+                        }
+                    };
                 }
             }
         }
+
+        // No basic auth
+        return {};
     }
 
-    private setLogOnConsole(page: puppeteer.Page): void {
+    private setLogOnConsole(page: Page): void {
         page.on("console", (msg: ConsoleMessage) => {
             let level = 10;
             const type = msg.type();
@@ -102,34 +115,29 @@ export class PrerenderService {
             }
 
             this.logger.extraLogs(`Browser log: ${msg.text()}`, level, {
-                stack: msg.stackTrace() ?? void 0,
                 location: msg.location() ?? void 0,
                 args: msg.args() ?? void 0,
             });
         });
     }
 
-    private async setRequestLeakDetector(
-        page: puppeteer.Page,
-    ): Promise<LeakedRequests[]> {
+    private async setRequestLeakDetector(page: Page): Promise<LeakedRequests[]> {
         const requests: LeakedRequests[] = [];
-        await page.setRequestInterception(true);
 
-        page.on("request", (request: puppeteer.HTTPRequest) => {
+        page.on("request", (request: Request) => {
             const leakedRequest = new LeakedRequests();
             leakedRequest.url = request.url();
             leakedRequest.startTime = Date.now();
             requests.push(leakedRequest);
-            request.continue();
         });
 
-        page.on("requestfinished", (request: puppeteer.HTTPRequest) => {
+        page.on("requestfinished", (request: Request) => {
             const url = request.url();
             const index = requests.findIndex((lreq) => lreq.url === url);
             requests.splice(index, 1);
         });
 
-        page.on("requestfailed", (request: puppeteer.HTTPRequest) => {
+        page.on("requestfailed", (request: Request) => {
             const url = request.url();
             const index = requests.findIndex((lreq) => lreq.url === url);
             requests.splice(index, 1);
@@ -144,7 +152,7 @@ export class PrerenderService {
     ) {
         if (
             error instanceof Error &&
-            error.message.startsWith("Navigation timeout")
+            error.name.startsWith("TimeoutError")
         ) {
             requests.forEach((lreq) => {
                 lreq.endTime = Date.now();
@@ -155,4 +163,5 @@ export class PrerenderService {
             });
         }
     }
+
 }
