@@ -15,6 +15,7 @@ describe("RenderController", () => {
 
     describe("root", () => {
         it('should return "Hello World!"', () => {
+            expect(renderController).not.toBeNull();
             expect("Hello World!").toBe("Hello World!");
         });
     });

@@ -16,40 +16,40 @@ export class JsonLogger implements LoggerService {
     /**
      * Write a 'log' level log.
      */
-    public log(message: any) {
+    public log(message: string) {
         this.writeJson(message, LogLevels.INFO);
     }
 
     /**
      * Write an 'error' level log.
      */
-    public error(message: any) {
+    public error(message: string) {
         this.writeJson(message, LogLevels.ERROR);
     }
 
     /**
      * Write a 'warn' level log.
      */
-    public warn(message: any) {
+    public warn(message: string) {
         this.writeJson(message, LogLevels.WARN);
     }
 
     /**
      * Write a 'debug' level log.
      */
-    public debug(message: any) {
+    public debug(message: string) {
         this.writeJson(message, LogLevels.DEBUG);
     }
 
     /**
      * Write a 'verbose' level log.
      */
-    public verbose(message: any) {
+    public verbose(message: string) {
         this.writeJson(message, LogLevels.TRACE);
     }
 
     public extraLogs(
-        message: any,
+        message: string,
         level: number,
         extraProps: object = {},
     ): void {
@@ -57,7 +57,7 @@ export class JsonLogger implements LoggerService {
     }
 
     protected writeJson(
-        message: any,
+        message: string,
         level: number,
         extraProps: object = {},
     ): void {

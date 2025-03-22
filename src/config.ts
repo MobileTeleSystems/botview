@@ -7,7 +7,7 @@ process.env.BOTVIEW_WAIT_UNTIL ||= "networkidle"; // load | domcontentloaded | n
 
 export const config = {
     basicAuth: process.env.BOTVIEW_BASIC_AUTHS,
-    navTimeout: JSON.parse(process.env.BOTVIEW_NAV_TIMEOUT),
-    defaultTimeout: JSON.parse(process.env.BOTVIEW_DEFAULT_TIMEOUT),
+    navTimeout: Number(process.env.BOTVIEW_NAV_TIMEOUT),
+    defaultTimeout: Number(process.env.BOTVIEW_DEFAULT_TIMEOUT),
     waitUntil: process.env.BOTVIEW_WAIT_UNTIL,
 };

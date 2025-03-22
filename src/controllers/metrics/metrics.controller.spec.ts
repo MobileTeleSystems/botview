@@ -8,7 +8,7 @@ describe("MetricsController", () => {
     beforeEach(async () => {
         const app: TestingModule = await Test.createTestingModule({
             controllers: [MetricsController],
-            providers: [PrometheusService]
+            providers: [PrometheusService],
         }).compile();
 
         appController = app.get<MetricsController>(MetricsController);
@@ -16,6 +16,7 @@ describe("MetricsController", () => {
 
     describe("root", () => {
         it('should return "Hello World!"', () => {
+            expect(appController).not.toBeNull();
             expect("Hello World!").toBe("Hello World!");
         });
     });

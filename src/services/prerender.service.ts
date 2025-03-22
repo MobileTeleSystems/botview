@@ -1,15 +1,23 @@
-import { JsonLogger, LogLevels} from "./json-logger.service";
+import { JsonLogger, LogLevels } from "./json-logger.service";
 import { config } from "../config";
 import { Injectable } from "@nestjs/common";
-import { chromium, webkit, devices, Browser, Page, ConsoleMessage, Request, BrowserContextOptions } from 'playwright';
-import {LeakedRequests} from "../models/LeakedRequests";
+import {
+    // chromium, // Yandex metrics problems
+    webkit,
+    devices,
+    Browser,
+    Page,
+    ConsoleMessage,
+    Request,
+    BrowserContextOptions,
+} from "playwright";
+import { LeakedRequests } from "../models/LeakedRequests";
 
 @Injectable()
 export class PrerenderService {
     public constructor(private readonly logger: JsonLogger) {}
 
     public async render(url: string, headers: Headers) {
-
         const browser: Browser = await webkit.launch({
             // headless: false, // for debug
             // devtools: true,
@@ -21,8 +29,8 @@ export class PrerenderService {
 
         const authHeaders = this.setAuth(url);
         const context = await browser.newContext({
-            ...devices['Galaxy S8'],
-            ...authHeaders
+            ...devices["Galaxy S8"],
+            ...authHeaders,
         });
 
         let requests: LeakedRequests[] = [];
@@ -35,17 +43,17 @@ export class PrerenderService {
                     Reflect.set(window, "prerender", data);
                 },
                 {
-                    userAgent: headers["user-agent"],
+                    userAgent: headers["user-agent"] as string,
                 },
             );
 
             page.setDefaultNavigationTimeout(config.navTimeout);
             page.setDefaultTimeout(config.defaultTimeout);
             this.setLogOnConsole(page);
-            requests = await this.setRequestLeakDetector(page);
+            requests = this.setRequestLeakDetector(page);
 
             await page.goto(url, {
-                waitUntil: config.waitUntil as any,
+                waitUntil: config.waitUntil as "networkidle",
                 timeout: config.navTimeout,
             });
             const pageContent = await page.content(); // serialized HTML of page DOM.
@@ -69,7 +77,9 @@ export class PrerenderService {
         }
     }
 
-    private async setAuth(url: string): Promise<Pick<BrowserContextOptions, "httpCredentials">> {
+    private setAuth(
+        url: string,
+    ): Pick<BrowserContextOptions, "httpCredentials"> {
         if (config.basicAuth) {
             // Url, login, password
             const basicAuths: [string, string, string][] = config.basicAuth
@@ -86,7 +96,7 @@ export class PrerenderService {
                         httpCredentials: {
                             username: auth[1],
                             password: auth[2],
-                        }
+                        },
                     };
                 }
             }
@@ -121,7 +131,7 @@ export class PrerenderService {
         });
     }
 
-    private async setRequestLeakDetector(page: Page): Promise<LeakedRequests[]> {
+    private setRequestLeakDetector(page: Page): LeakedRequests[] {
         const requests: LeakedRequests[] = [];
 
         page.on("request", (request: Request) => {
@@ -150,10 +160,7 @@ export class PrerenderService {
         requests: LeakedRequests[],
         error: unknown,
     ) {
-        if (
-            error instanceof Error &&
-            error.name.startsWith("TimeoutError")
-        ) {
+        if (error instanceof Error && error.name.startsWith("TimeoutError")) {
             requests.forEach((lreq) => {
                 lreq.endTime = Date.now();
                 lreq.time = lreq.endTime - lreq.startTime;
@@ -163,5 +170,4 @@ export class PrerenderService {
             });
         }
     }
-
 }
