@@ -54,7 +54,9 @@ export class PrerenderService {
                 config.blockImages ||
                 config.blockStylesheets ||
                 config.blockFonts ||
-                config.blockMedia
+                config.blockMedia ||
+                config.blockUrls.length > 0 ||
+                config.blockUrlsRegex.length > 0
             ) {
                 this.setResourceBlocking(page);
             }
@@ -88,22 +90,14 @@ export class PrerenderService {
     private setAuth(
         url: string,
     ): Pick<BrowserContextOptions, "httpCredentials"> {
-        if (config.basicAuth) {
-            // Url, login, password
-            const basicAuths: [string, string, string][] = config.basicAuth
-                .split(",")
-                .map((auth: string) => {
-                    const parts = auth.trim().split(":");
-
-                    return [decodeURIComponent(parts[0]), parts[1], parts[2]];
-                });
-
-            for (const auth of basicAuths) {
-                if (url.startsWith(auth[0])) {
+        if (config.basicAuthParsed.length > 0) {
+            // eslint-disable-next-line prettier/prettier
+            for (const [authUrl, username, password] of config.basicAuthParsed) {
+                if (url.startsWith(authUrl)) {
                     return {
                         httpCredentials: {
-                            username: auth[1],
-                            password: auth[2],
+                            username,
+                            password,
                         },
                     };
                 }
@@ -142,6 +136,33 @@ export class PrerenderService {
     private setResourceBlocking(page: Page): void {
         void page.route("**/*", async (route) => {
             const resourceType = route.request().resourceType();
+            const requestUrl = route.request().url();
+
+            // Block specific URLs if configured
+            if (config.blockUrls.length > 0) {
+                for (const blockedUrl of config.blockUrls) {
+                    if (requestUrl.includes(blockedUrl)) {
+                        this.logger.debug(
+                            `Blocked URL: ${requestUrl} (matches: ${blockedUrl})`,
+                        );
+                        await route.abort();
+                        return;
+                    }
+                }
+            }
+
+            // Block URLs matching regex patterns if configured
+            if (config.blockUrlsRegex.length > 0) {
+                for (const regex of config.blockUrlsRegex) {
+                    if (regex.test(requestUrl)) {
+                        this.logger.debug(
+                            `Blocked URL by regex: ${requestUrl} (pattern: ${regex.source})`,
+                        );
+                        await route.abort();
+                        return;
+                    }
+                }
+            }
 
             // Block images if enabled in config
             if (resourceType === "image" && config.blockImages) {

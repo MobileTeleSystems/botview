@@ -24,7 +24,7 @@ Now you can open the browser and check the work with the command:
 http://localhost:3000/render/https://mts.ru/
 ```
 
-The fully rendered page should display, including all content..
+The fully rendered page should display, including all content.
 
 ## Use
 
@@ -47,16 +47,28 @@ The server will return a response with the specified status code.
 ## Container parameters
 
 - `-e BOTVIEW_BASIC_AUTHS="https%3A%2F%2Ftb.mts.ru%2F"` - an array of endpoints with basic authorization parameters, default empty.
-    Has format encodeURIComponent("url"):encodeURIComponent("login"):encodeURIComponent("password"). Use comma as separator.
+    Has format encodeURIComponent("url"):encodeURIComponent("login"):encodeURIComponent("password"). Use comma or space as separator.
 
-- `-e BOTVIEW_NAV_TIMEOUT=30000` - [This setting will change the default maximum navigation time](https://pptr.dev/api/puppeteer.page.setdefaultnavigationtimeout),
-    default 30000.
+- `-e BOTVIEW_NAV_TIMEOUT=3000000` - [This setting will change the default maximum navigation time](https://playwright.dev/docs/api/class-page#page-set-default-navigation-timeout),
+    default 3000000.
 
-- `-e BOTVIEW_DEFAULT_TIMEOUT=15000` - [This setting will change the default timeout](https://pptr.dev/api/puppeteer.page.setdefaulttimeout),
+- `-e BOTVIEW_DEFAULT_TIMEOUT=15000` - [This setting will change the default timeout](https://playwright.dev/docs/api/class-page#page-set-default-timeout),
     default 15000.
 
-- `-e BOTVIEW_WAIT_UNTIL=networkidle0` - [When to consider waiting succeeds. Given an array of event strings, waiting is considered to be successful after all events have been fired](https://pptr.dev/api/puppeteer.waitforoptions),
-    default networkidle0.
+- `-e BOTVIEW_WAIT_UNTIL=networkidle` - [When to consider waiting succeeds. Given an array of event strings, waiting is considered to be successful after all events have been fired](https://playwright.dev/docs/api/class-page#page-goto),
+    default networkidle.
+
+- `-e BOTVIEW_BLOCK_IMAGES=true` - Block loading of images to improve performance, default true.
+
+- `-e BOTVIEW_BLOCK_STYLESHEETS=true` - Block loading of stylesheets to improve performance, default true.
+
+- `-e BOTVIEW_BLOCK_FONTS=true` - Block loading of fonts to improve performance, default true.
+
+- `-e BOTVIEW_BLOCK_MEDIA=true` - Block loading of media files to improve performance, default true.
+
+- `-e BOTVIEW_BLOCK_URLS=""` - Comma or space separated list of URL-encoded URLs to block, default empty.
+
+- `-e BOTVIEW_BLOCK_URLS_REGEX=""` - Comma or space separated list of URL-encoded regular expressions to block URLs, default empty.
 
 ## Metrics Prometheus
 
