@@ -1,15 +1,15 @@
-# Microservice for prerendering web pages.
+# Microservice for prerendering web pages
 
-Web pages that are rendered on the browser side and made without SSR are not seen by bots. Because bots can't render pages. This microservice allows all bots to see the already rendered page.
+Web pages rendered on the client side without SSR are not visible to bots, because bots can't render pages. This microservice allows all bots to see the already rendered page.
 
 Features:
 
 - Allows bots to see content on web pages without SSR
-- Works on any framework, ex: JQuery, Angular 1, StencilJS and others
-- Works on any technologies, ex: WebComponents, Microfrontends, Dynamic Content and others
-- Fast speed and low memory usage, inside only web engine without heavy browser
-- The prerender can work not only for bots but also for all clients if the application supports rerendering
-- Includes exporter of metrics for Prometheus
+- Works with any framework, e.g. JQuery, Angular 1, StencilJS, and others
+- Works with any technology, e.g. WebComponents, Microfrontends, Dynamic Content, and others
+- Fast and low memory usage, uses only a web engine without a heavy browser
+- Prerendering can work not only for bots but also for all clients if the application supports rerendering
+- Includes a Prometheus metrics exporter
 
 ## Try
 
@@ -19,13 +19,13 @@ To try the microservice features, run the container with the command:
 docker run -it --rm -p 3000:3000 mtsrus/botview
 ```
 
-Now you can open the browser and check the work with the command:
+Now you can open the browser and check the result with the command:
 
 ```sh
 http://localhost:3000/render/https://mts.ru/
 ```
 
-The fully rendered page should display, including all content.
+The fully rendered page should be displayed, including all content.
 
 ## Use
 
@@ -37,7 +37,7 @@ docker run -d --restart always -p 3000:3000 mtsrus/botview
 
 ## Return status code
 
-Add the following element to your html and specify the required response status code:
+Add the following element to your HTML and specify the required response status code:
 
 ```html
 <meta name="prerender-status" content="301" />
@@ -47,8 +47,9 @@ The server will return a response with the specified status code.
 
 ## Container parameters
 
-- `-e BOTVIEW_BASIC_AUTHS=""` - an array of endpoints with basic authorization parameters, default empty.
-    Has format "url:login:password" (URL-encoding is optional for simple URLs). Use comma or space as separator.
+
+- `-e BOTVIEW_BASIC_AUTHS=""` - An array of endpoints with basic authorization parameters, default is empty.
+    Format: "url:login:password" (URL-encoding is optional for simple URLs). Use comma or space as a separator.
     Example: `"https://example.com:user:pass,https://test.com:admin:secret"`
 
 - `-e BOTVIEW_NAV_TIMEOUT=30000` - [This setting will change the default maximum navigation time](https://playwright.dev/docs/api/class-page#page-set-default-navigation-timeout),
@@ -71,11 +72,11 @@ The server will return a response with the specified status code.
 
 - `-e BOTVIEW_BLOCK_MEDIA=true` - Block loading of media files to improve performance, default true.
 
-- `-e BOTVIEW_BLOCK_URLS="https://an.yandex.ru, https://mc.yandex.ru"` - Comma or space separated list of URL prefixes to block (uses startsWith matching), default blocks Yandex analytics.
+- `-e BOTVIEW_BLOCK_URLS="https://an.yandex.ru, https://mc.yandex.ru"` - Comma or space separated list of URL prefixes to block (uses startsWith matching), by default blocks Yandex analytics.
   Example: `"https://google-analytics.com,https://facebook.com/tr"` will block all requests starting with these URLs.
-  Set to empty string `""` to disable default blocking.
+  Set to an empty string `""` to disable default blocking.
 
-- `-e BOTVIEW_BLOCK_URLS_REGEX=""` - Comma or space separated list of regular expressions to block URLs, default empty.
+- `-e BOTVIEW_BLOCK_URLS_REGEX=""` - Comma or space separated list of regular expressions to block URLs, default is empty.
   Example: `".*\.ads\..*,.*tracking.*"` will block URLs containing ".ads." or "tracking" anywhere in the URL.
 
 - `-e BOTVIEW_LOG_LEVEL=info` - Log level for the application, default "info".
@@ -83,13 +84,13 @@ The server will return a response with the specified status code.
 
 ## Troubleshooting Timeout Issues
 
-If you encounter timeout errors during prerendering, it's usually caused by "leaked requests" - network requests that don't complete properly and prevent the page from finishing loading.
+If you encounter timeout errors during prerendering, it is usually caused by "leaked requests" - network requests that do not complete properly and prevent the page from finishing loading.
 
 To fix this:
 
 1. **Check the logs** for entries containing `"Leaked requests"` - these will show which URLs are causing the timeout
-2. **Add problematic URLs to BOTVIEW_BLOCK_URLS** to prevent them from being loaded during prerendering
-3. **Use the container parameter** `-e BOTVIEW_BLOCK_URLS="url1,url2,url3"` to block specific URLs
+2. **Add problematic URLs to BOTVIEW_BLOCK_URLS** to prevent them from being loaded during prerendering.
+3. **Use the container parameter** `-e BOTVIEW_BLOCK_URLS="url1,url2,url3"` to block specific URLs.
 
 **Example:**
 
@@ -102,13 +103,13 @@ By default, `https://an.yandex.ru` and `https://mc.yandex.ru` are blocked due to
 
 ## Metrics Prometheus
 
-The microservice has built-in Prometheus monitoring and is located on the endpoint `/metrics`.
+The microservice has built-in Prometheus monitoring and is available at the endpoint `/metrics`.
 
 Block this endpoint on the proxy if you do not need to provide access to metrics from outside your network.
 
 ## Proxy server setup
 
-In order to catch bots and send them to the prerendering microservice, you need to configure a proxy server.
+To catch bots and send them to the prerendering microservice, you need to configure a proxy server.
 
 Example config for Nginx:
 
