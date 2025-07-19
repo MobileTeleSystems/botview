@@ -47,7 +47,6 @@ The server will return a response with the specified status code.
 
 ## Container parameters
 
-
 - `-e BOTVIEW_BASIC_AUTHS=""` - An array of endpoints with basic authorization parameters, default is empty.
     Format: "url:login:password" (URL-encoding is optional for simple URLs). Use comma or space as a separator.
     Example: `"https://example.com:user:pass,https://test.com:admin:secret"`

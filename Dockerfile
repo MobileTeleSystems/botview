@@ -1,7 +1,7 @@
 FROM mcr.microsoft.com/playwright:v1.54.1-noble AS development
 
 WORKDIR /app
-COPY package*.json tsconfig*.json nest-cli.json ./
+COPY package*.json tsconfig*.json nest-cli.json eslint.config.mjs ./
 RUN npm ci
 
 COPY ./src ./src
