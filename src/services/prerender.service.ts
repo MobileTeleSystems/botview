@@ -2,8 +2,7 @@ import { JsonLogger, LogLevels } from "./json-logger.service";
 import { config } from "../config";
 import { Injectable } from "@nestjs/common";
 import {
-    // chromium, // Yandex metrics problems
-    webkit,
+    chromium,
     devices,
     Browser,
     Page,
@@ -18,9 +17,9 @@ export class PrerenderService {
     public constructor(private readonly logger: JsonLogger) {}
 
     public async render(url: string, headers: Headers) {
-        const browser: Browser = await webkit.launch({
-            // headless: false, // for debug
-            // devtools: true,
+        const browser: Browser = await chromium.launch({
+            headless: false, // for debug
+            devtools: true,
             // args: [
             //     '--no-sandbox', '--disable-setuid-sandbox'
             // ],
@@ -50,6 +49,15 @@ export class PrerenderService {
             page.setDefaultNavigationTimeout(config.navTimeout);
             page.setDefaultTimeout(config.defaultTimeout);
             this.setLogOnConsole(page);
+
+            if (
+                config.blockImages ||
+                config.blockStylesheets ||
+                config.blockFonts ||
+                config.blockMedia
+            ) {
+                this.setResourceBlocking(page);
+            }
             requests = this.setRequestLeakDetector(page);
 
             await page.goto(url, {
@@ -128,6 +136,27 @@ export class PrerenderService {
                 location: msg.location() ?? void 0,
                 args: msg.args() ?? void 0,
             });
+        });
+    }
+
+    private setResourceBlocking(page: Page): void {
+        void page.route("**/*", async (route) => {
+            const resourceType = route.request().resourceType();
+
+            // Блокируем изображения и стили
+            if (resourceType === "image" || resourceType === "stylesheet") {
+                await route.abort();
+                return;
+            }
+
+            // Опционально можно также блокировать шрифты, медиа и другие ресурсы
+            if (resourceType === "font" || resourceType === "media") {
+                await route.abort();
+                return;
+            }
+
+            // Разрешаем все остальные запросы
+            await route.continue();
         });
     }
 
