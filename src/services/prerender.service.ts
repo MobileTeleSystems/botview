@@ -1,4 +1,5 @@
-import { JsonLogger, LogLevels } from "./json-logger.service";
+import { JsonLogger } from "./json-logger.service";
+import {LogLevels} from "../LogLevels";
 import { config } from "../config";
 import { Injectable } from "@nestjs/common";
 import {

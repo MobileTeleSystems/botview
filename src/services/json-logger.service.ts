@@ -1,15 +1,7 @@
 import { LoggerService } from "@nestjs/common";
 import { hostname } from "os";
 import { config } from "../config";
-
-export enum LogLevels {
-    FATAL = 60,
-    ERROR = 50,
-    WARN = 40,
-    INFO = 30,
-    DEBUG = 20,
-    TRACE = 10,
-}
+import { LogLevels } from "../LogLevels";
 
 export class JsonLogger implements LoggerService {
     protected hostname: string = hostname();

@@ -1,5 +1,5 @@
 // array of basic auths in format "url:login:password" (URL-encoding is optional), use comma or space as separator
-import { LogLevels } from "./services/json-logger.service";
+import { LogLevels } from "./LogLevels";
 
 process.env.BASIC_AUTHS ||= void 0;
 process.env.BOTVIEW_BASIC_AUTHS ||= process.env.BASIC_AUTHS; // BASIC_AUTHS - legacy env
