@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.3.1] - 2025-07-19
+
+### 🐛 Bug Fixes
+
+- Improve clarity and grammar in README.md
+
 ## [2.3.0] - 2025-07-19
 
 ### 🚀 Features
