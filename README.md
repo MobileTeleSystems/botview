@@ -74,6 +74,25 @@ The server will return a response with the specified status code.
 - `-e BOTVIEW_BLOCK_URLS_REGEX=""` - Comma or space separated list of regular expressions to block URLs, default empty.
   Example: `".*\.ads\..*,.*tracking.*"` will block URLs containing ".ads." or "tracking" anywhere in the URL.
 
+## Troubleshooting Timeout Issues
+
+If you encounter timeout errors during prerendering, it's usually caused by "leaked requests" - network requests that don't complete properly and prevent the page from finishing loading.
+
+To fix this:
+
+1. **Check the logs** for entries containing `"Leaked requests"` - these will show which URLs are causing the timeout
+2. **Add problematic URLs to BOTVIEW_BLOCK_URLS** to prevent them from being loaded during prerendering
+3. **Use the container parameter** `-e BOTVIEW_BLOCK_URLS="url1,url2,url3"` to block specific URLs
+
+**Example:**
+
+```sh
+docker run -d -p 3000:3000 -e BOTVIEW_BLOCK_URLS="https://problematic-analytics.com,https://slow-tracker.net" mtsrus/botview
+```
+
+**Default blocked URLs:**
+By default, `https://an.yandex.ru` and `https://mc.yandex.ru` are blocked due to a Chromium bug that prevents proper handling of these analytics requests, which can cause timeouts.
+
 ## Metrics Prometheus
 
 The microservice has built-in Prometheus monitoring and is located on the endpoint `/metrics`.

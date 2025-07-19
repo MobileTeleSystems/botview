@@ -31,7 +31,7 @@ export class RenderController {
         const result = await this.prerenderService.render(url, reguest.headers);
 
         response
-            .status(Number.parseInt(result.statusCode ?? "200") || 200)
+            .status(Number.parseInt(result.statusCode ?? "200"))
             .send(result.pageContent);
     }
 }
