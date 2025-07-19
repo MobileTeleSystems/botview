@@ -161,7 +161,7 @@ describe("RenderController", () => {
             ).rejects.toThrow("Navigation timeout");
         });
 
-        it("should use default status code 500 when statusCode is null", async () => {
+        it("should use default status code 200 when statusCode is null", async () => {
             const mockRequest: MockRequest = {
                 url: "/render/https://example.com",
                 headers: { "user-agent": "test-agent" },
@@ -179,7 +179,7 @@ describe("RenderController", () => {
                 mockResponse as Response,
             );
 
-            expect(mockResponse.status).toHaveBeenCalledWith(500);
+            expect(mockResponse.status).toHaveBeenCalledWith(200);
         });
 
         it("should use default status code 200 when statusCode is invalid", async () => {

@@ -30,8 +30,9 @@ export class RenderController {
 
         const result = await this.prerenderService.render(url, reguest.headers);
 
-        response
-            .status(Number.parseInt(result.statusCode ?? "200"))
-            .send(result.pageContent);
+        const statusCode = Number.parseInt(result.statusCode ?? "200");
+        const validStatusCode = Number.isNaN(statusCode) ? 200 : statusCode;
+
+        response.status(validStatusCode).send(result.pageContent);
     }
 }
