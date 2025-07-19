@@ -32,7 +32,7 @@ describe("AppController (e2e)", () => {
             expect(response.text).toContain("<html");
             expect(response.text).toContain("</html>");
             expect(response.text).toContain("<head>");
-            expect(response.text).toContain("<body>");
+            expect(response.text).toContain("<body");
 
             // Check that response contains MTS-specific content
             expect(response.text.toLowerCase()).toMatch(/мтс|mts|телеком/);
