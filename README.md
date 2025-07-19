@@ -46,11 +46,12 @@ The server will return a response with the specified status code.
 
 ## Container parameters
 
-- `-e BOTVIEW_BASIC_AUTHS="https%3A%2F%2Ftb.mts.ru%2F"` - an array of endpoints with basic authorization parameters, default empty.
-    Has format encodeURIComponent("url"):encodeURIComponent("login"):encodeURIComponent("password"). Use comma or space as separator.
+- `-e BOTVIEW_BASIC_AUTHS=""` - an array of endpoints with basic authorization parameters, default empty.
+    Has format "url:login:password" (URL-encoding is optional for simple URLs). Use comma or space as separator.
+    Example: `"https://example.com:user:pass,https://test.com:admin:secret"`
 
-- `-e BOTVIEW_NAV_TIMEOUT=3000000` - [This setting will change the default maximum navigation time](https://playwright.dev/docs/api/class-page#page-set-default-navigation-timeout),
-    default 3000000.
+- `-e BOTVIEW_NAV_TIMEOUT=30000` - [This setting will change the default maximum navigation time](https://playwright.dev/docs/api/class-page#page-set-default-navigation-timeout),
+    default 30000.
 
 - `-e BOTVIEW_DEFAULT_TIMEOUT=15000` - [This setting will change the default timeout](https://playwright.dev/docs/api/class-page#page-set-default-timeout),
     default 15000.
@@ -66,9 +67,12 @@ The server will return a response with the specified status code.
 
 - `-e BOTVIEW_BLOCK_MEDIA=true` - Block loading of media files to improve performance, default true.
 
-- `-e BOTVIEW_BLOCK_URLS=""` - Comma or space separated list of URL-encoded URLs to block, default empty.
+- `-e BOTVIEW_BLOCK_URLS="https://an.yandex.ru, https://mc.yandex.ru"` - Comma or space separated list of URL prefixes to block (uses startsWith matching), default blocks Yandex analytics.
+  Example: `"https://google-analytics.com,https://facebook.com/tr"` will block all requests starting with these URLs.
+  Set to empty string `""` to disable default blocking.
 
-- `-e BOTVIEW_BLOCK_URLS_REGEX=""` - Comma or space separated list of URL-encoded regular expressions to block URLs, default empty.
+- `-e BOTVIEW_BLOCK_URLS_REGEX=""` - Comma or space separated list of regular expressions to block URLs, default empty.
+  Example: `".*\.ads\..*,.*tracking.*"` will block URLs containing ".ads." or "tracking" anywhere in the URL.
 
 ## Metrics Prometheus
 

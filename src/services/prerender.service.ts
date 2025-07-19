@@ -141,7 +141,7 @@ export class PrerenderService {
             // Block specific URLs if configured
             if (config.blockUrls.length > 0) {
                 for (const blockedUrl of config.blockUrls) {
-                    if (requestUrl.includes(blockedUrl)) {
+                    if (requestUrl.startsWith(blockedUrl)) {
                         this.logger.debug(
                             `Blocked URL: ${requestUrl} (matches: ${blockedUrl})`,
                         );

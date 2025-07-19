@@ -1,15 +1,15 @@
-// array of basic auths in format encodeURIComponent("url"):login:password, use comma or space as separator
+// array of basic auths in format "url:login:password" (URL-encoding is optional), use comma or space as separator
 process.env.BASIC_AUTHS ||= void 0;
 process.env.BOTVIEW_BASIC_AUTHS ||= process.env.BASIC_AUTHS; // BASIC_AUTHS - legacy env
-process.env.BOTVIEW_NAV_TIMEOUT ||= "3000000"; // ms
+process.env.BOTVIEW_NAV_TIMEOUT ||= "30000"; // ms
 process.env.BOTVIEW_DEFAULT_TIMEOUT ||= "15000"; // ms
 process.env.BOTVIEW_WAIT_UNTIL ||= "networkidle"; // load | domcontentloaded | networkidle | commit
 process.env.BOTVIEW_BLOCK_IMAGES ||= "true"; // true to block images
 process.env.BOTVIEW_BLOCK_STYLESHEETS ||= "true"; // true to block stylesheets
 process.env.BOTVIEW_BLOCK_FONTS ||= "true"; // true to block fonts
 process.env.BOTVIEW_BLOCK_MEDIA ||= "true"; // true to block media
-process.env.BOTVIEW_BLOCK_URLS ||= ""; // comma or space separated list of URL-encoded urls to block
-process.env.BOTVIEW_BLOCK_URLS_REGEX ||= ""; // comma or space separated list of URL-encoded regexes to block
+process.env.BOTVIEW_BLOCK_URLS ||= "https://an.yandex.ru, https://mc.yandex.ru"; // comma or space separated list of urls to block (URL-encoding is optional)
+process.env.BOTVIEW_BLOCK_URLS_REGEX ||= ""; // comma or space separated list of regexes to block (URL-encoding is optional)
 
 export const config = {
     basicAuth: process.env.BOTVIEW_BASIC_AUTHS,
