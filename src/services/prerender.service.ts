@@ -18,8 +18,8 @@ export class PrerenderService {
 
     public async render(url: string, headers: Headers) {
         const browser: Browser = await chromium.launch({
-            headless: false, // for debug
-            devtools: true,
+            // headless: false, // for debug
+            // devtools: true,
             // args: [
             //     '--no-sandbox', '--disable-setuid-sandbox'
             // ],
