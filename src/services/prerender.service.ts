@@ -118,9 +118,9 @@ export class PrerenderService {
                 level = 30;
             } else if (type === "error") {
                 level = 50;
-            } else if (type === "warn") {
+            } else if (type === "warning") {
                 level = 40;
-            } else if (type === "verbose") {
+            } else if (type === "trace") {
                 level = 10;
             }
 

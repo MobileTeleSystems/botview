@@ -1,0 +1,43 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+## [2.1.0] - 2025-07-19
+
+### 🚀 Features
+
+- Replace nestjs-prom by prom-client for monitoring, add json logger, make logs in json format, remove cache service
+- Add default timeouts
+- Add logger on browser console logs
+- Update docker image version
+- Add support more env variables, move prerender logic to service layer
+- Add long request detection
+- Update dependencies versions, use new puppeteer headless mode
+- Update dependencies versions
+- Update dependencies versions
+- Replace puppeter engine by playwright engine, use webkit engine
+- Update nestjs to version 11 and other packages to latest versions
+
+### 📚 Documentation
+
+- Update service name in readme
+- Update container parameters section in readme
+- Add to readme info about change status code
+
+### ⚙️ Miscellaneous Tasks
+
+- Transfer to github
+- Setup build by github actions
+- Update docker image version
+- Update package version
+- Test with networkidle2
+- Update version
+- Return default wait until to networkidle0
+- Publish reverted version
+- Update code to new linter version
+- Delete dead code
+
+### Eat
+
+- Add goto timeout
+
