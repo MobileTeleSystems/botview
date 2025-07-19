@@ -74,6 +74,9 @@ The server will return a response with the specified status code.
 - `-e BOTVIEW_BLOCK_URLS_REGEX=""` - Comma or space separated list of regular expressions to block URLs, default empty.
   Example: `".*\.ads\..*,.*tracking.*"` will block URLs containing ".ads." or "tracking" anywhere in the URL.
 
+- `-e BOTVIEW_LOG_LEVEL=info` - Log level for the application, default "info".
+  Available levels: `trace`, `debug`, `info`, `warn`, `error`, `fatal`.
+
 ## Troubleshooting Timeout Issues
 
 If you encounter timeout errors during prerendering, it's usually caused by "leaked requests" - network requests that don't complete properly and prevent the page from finishing loading.

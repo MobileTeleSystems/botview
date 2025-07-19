@@ -1,5 +1,6 @@
 import { LoggerService } from "@nestjs/common";
 import { hostname } from "os";
+import { config } from "../config";
 
 export enum LogLevels {
     FATAL = 60,
@@ -12,6 +13,12 @@ export enum LogLevels {
 
 export class JsonLogger implements LoggerService {
     protected hostname: string = hostname();
+    private minLogLevel: number;
+
+    constructor() {
+        // Получаем минимальный уровень логирования из конфигурации
+        this.minLogLevel = config.logLevel;
+    }
 
     /**
      * Write a 'log' level log.
@@ -25,6 +32,13 @@ export class JsonLogger implements LoggerService {
      */
     public error(message: string) {
         this.writeJson(message, LogLevels.ERROR);
+    }
+
+    /**
+     * Write a 'fatal' level log.
+     */
+    public fatal(message: string) {
+        this.writeJson(message, LogLevels.FATAL);
     }
 
     /**
@@ -48,6 +62,13 @@ export class JsonLogger implements LoggerService {
         this.writeJson(message, LogLevels.TRACE);
     }
 
+    /**
+     * Write a 'trace' level log.
+     */
+    public trace(message: string) {
+        this.writeJson(message, LogLevels.TRACE);
+    }
+
     public extraLogs(
         message: string,
         level: number,
@@ -61,6 +82,11 @@ export class JsonLogger implements LoggerService {
         level: number,
         extraProps: object = {},
     ): void {
+        // Проверяем, нужно ли выводить лог в зависимости от уровня
+        if (level < this.minLogLevel) {
+            return;
+        }
+
         console.log(
             JSON.stringify({
                 message: message,
