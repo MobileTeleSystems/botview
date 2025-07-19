@@ -143,19 +143,31 @@ export class PrerenderService {
         void page.route("**/*", async (route) => {
             const resourceType = route.request().resourceType();
 
-            // Блокируем изображения и стили
-            if (resourceType === "image" || resourceType === "stylesheet") {
+            // Block images if enabled in config
+            if (resourceType === "image" && config.blockImages) {
                 await route.abort();
                 return;
             }
 
-            // Опционально можно также блокировать шрифты, медиа и другие ресурсы
-            if (resourceType === "font" || resourceType === "media") {
+            // Block stylesheets if enabled in config
+            if (resourceType === "stylesheet" && config.blockStylesheets) {
                 await route.abort();
                 return;
             }
 
-            // Разрешаем все остальные запросы
+            // Block fonts if enabled in config
+            if (resourceType === "font" && config.blockFonts) {
+                await route.abort();
+                return;
+            }
+
+            // Block media if enabled in config
+            if (resourceType === "media" && config.blockMedia) {
+                await route.abort();
+                return;
+            }
+
+            // Allow all other requests
             await route.continue();
         });
     }
