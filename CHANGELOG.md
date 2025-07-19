@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.2.0] - 2025-07-19
+
+### 🚀 Features
+
+- Update Docker publish workflow and enhance README with troubleshooting tips for timeout issues
+
 ## [2.1.0] - 2025-07-19
 
 ### ⚙️ Miscellaneous Tasks
