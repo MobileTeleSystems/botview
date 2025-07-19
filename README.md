@@ -3,6 +3,7 @@
 Web pages that are rendered on the browser side and made without SSR are not seen by bots. Because bots can't render pages. This microservice allows all bots to see the already rendered page.
 
 Features:
+
 - Allows bots to see content on web pages without SSR
 - Works on any framework, ex: JQuery, Angular 1, StencilJS and others
 - Works on any technologies, ex: WebComponents, Microfrontends, Dynamic Content and others
@@ -58,6 +59,9 @@ The server will return a response with the specified status code.
 
 - `-e BOTVIEW_WAIT_UNTIL=networkidle` - [When to consider waiting succeeds. Given an array of event strings, waiting is considered to be successful after all events have been fired](https://playwright.dev/docs/api/class-page#page-goto),
     default networkidle.
+
+- `-e BOTVIEW_VIEWPORT="360x640"` - Set the screen resolution (viewport) for the browser context, format is WIDTHxHEIGHT (e.g. `1280x720`). Default is `360x640`.
+  Example: `-e BOTVIEW_VIEWPORT="1280x720"`
 
 - `-e BOTVIEW_BLOCK_IMAGES=true` - Block loading of images to improve performance, default true.
 

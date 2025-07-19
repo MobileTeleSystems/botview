@@ -12,6 +12,7 @@ process.env.BOTVIEW_BLOCK_FONTS ||= "true"; // true to block fonts
 process.env.BOTVIEW_BLOCK_MEDIA ||= "true"; // true to block media
 process.env.BOTVIEW_BLOCK_URLS ||= "https://an.yandex.ru, https://mc.yandex.ru"; // comma or space separated list of urls to block (URL-encoding is optional)
 process.env.BOTVIEW_BLOCK_URLS_REGEX ||= ""; // comma or space separated list of regexes to block (URL-encoding is optional)
+process.env.BOTVIEW_VIEWPORT ||= "360x640"; // screen viewport, format: WIDTHxHEIGHT (e.g. 360x640)
 process.env.BOTVIEW_LOG_LEVEL ||= LogLevels.INFO.toString(); // log level: trace, debug, info, warn, error, fatal
 
 function getLogLevelChecked(logLevel: string): number {
@@ -27,6 +28,12 @@ function getLogLevelChecked(logLevel: string): number {
         ] as number;
     }
     throw new Error(`Unknown BOTVIEW_LOG_LEVEL: ${logLevel}`);
+}
+
+function parseViewport(str: string): { width: number; height: number } {
+    const match = /^([0-9]+)x([0-9]+)$/i.exec(str);
+    if (!match) return { width: 360, height: 640 };
+    return { width: Number(match[1]), height: Number(match[2]) };
 }
 
 export const config = {
@@ -55,4 +62,5 @@ export const config = {
               .filter(Boolean)
         : [],
     logLevel: getLogLevelChecked(process.env.BOTVIEW_LOG_LEVEL),
+    viewport: parseViewport(process.env.BOTVIEW_VIEWPORT),
 };

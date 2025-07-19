@@ -1,10 +1,9 @@
 import { JsonLogger } from "./json-logger.service";
-import {LogLevels} from "../LogLevels";
+import { LogLevels } from "../LogLevels";
 import { config } from "../config";
 import { Injectable } from "@nestjs/common";
 import {
     chromium,
-    devices,
     Browser,
     Page,
     ConsoleMessage,
@@ -29,7 +28,7 @@ export class PrerenderService {
 
         const authHeaders = this.setAuth(url);
         const context = await browser.newContext({
-            ...devices["Galaxy S8"],
+            viewport: config.viewport,
             ...authHeaders,
         });
 
@@ -93,7 +92,11 @@ export class PrerenderService {
     ): Pick<BrowserContextOptions, "httpCredentials"> {
         if (config.basicAuthParsed.length > 0) {
             // eslint-disable-next-line prettier/prettier
-            for (const [authUrl, username, password] of config.basicAuthParsed) {
+            for (const [
+                authUrl,
+                username,
+                password,
+            ] of config.basicAuthParsed) {
                 if (url.startsWith(authUrl)) {
                     return {
                         httpCredentials: {
