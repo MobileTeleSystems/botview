@@ -41,8 +41,21 @@ jobs:
       - run: npm run release
       - run: git push && git push --tags
 
+      - name: Get version from package.json
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "MAJOR=$(echo $VERSION | cut -d. -f1)" >> $GITHUB_ENV
+          echo "MINOR=$(echo $VERSION | cut -d. -f2)" >> $GITHUB_ENV
+          echo "PATCH=$(echo $VERSION | cut -d. -f3)" >> $GITHUB_ENV
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
         with:
           push: true
-          tags: mtsrus/botview:latest, mtsrus/botview:2, mtsrus/botview:2.0, mtsrus/botview:2.0.0
+          tags: |
+            mtsrus/botview:latest
+            mtsrus/botview:${{ env.MAJOR }}
+            mtsrus/botview:${{ env.MAJOR }}.${{ env.MINOR }}
+            mtsrus/botview:${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}
+
