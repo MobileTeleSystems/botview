@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.3.5] - 2025-11-19
+
+### ⚙️ Miscellaneous Tasks
+
+- *(botview)* Bump version to 2.3.4
+
 ## [2.3.3] - 2025-11-19
 
 ## [2.3.2] - 2025-07-19
