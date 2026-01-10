@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright:v1.54.1-noble AS development
+FROM mcr.microsoft.com/playwright:v1.57.0-noble AS development
 
 WORKDIR /app
 COPY package*.json tsconfig*.json nest-cli.json eslint.config.mjs ./
@@ -12,7 +12,7 @@ RUN npm run test:e2e
 RUN npm run build
 
 
-FROM mcr.microsoft.com/playwright:v1.54.1-noble as production
+FROM mcr.microsoft.com/playwright:v1.57.0-noble as production
 
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
