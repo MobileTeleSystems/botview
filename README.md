@@ -1,6 +1,5 @@
 # 🤖 Botview
 
-[![Release](https://img.shields.io/github/v/release/MobileTeleSystems/botview?style=flat-square)](https://github.com/MobileTeleSystems/botview/releases)
 [![Docker Pulls](https://img.shields.io/docker/pulls/mtsrus/botview?style=flat-square)](https://hub.docker.com/r/mtsrus/botview)
 [![License](https://img.shields.io/github/license/MobileTeleSystems/botview?style=flat-square)](LICENSE)
 [![NestJS](https://img.shields.io/badge/NestJS-11.x-ea2845?style=flat-square&logo=nestjs)](https://nestjs.com/)
