@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.3.9] - 2026-01-10
+
+### 📚 Documentation
+
+- Remove outdated release badge from README.md
+
 ## [2.3.8] - 2026-01-10
 
 ## [2.3.7] - 2026-01-10
